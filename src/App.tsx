@@ -36,9 +36,31 @@ const App = () => {
     setLoading(false)
   }
 
-  const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {}
+  const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!gameOver) {
+      const answer = e.currentTarget.value
+      const correct = questions[current].correct_answer === answer
+      if (correct) setScore((prev) => prev + 1)
 
-  const nextQuestion = () => {}
+      const answerObject = {
+        question: questions[current].question,
+        answer,
+        correct,
+        correctAnswer: questions[current].correct_answer
+      }
+
+      setUserAnswers((prev) => [...prev, answerObject])
+    }
+  }
+
+  const nextQuestion = () => {
+    const nextQuestion = current + 1
+    if (nextQuestion === TOTAL_QUESTIONS) {
+      setGameOver(true)
+    } else {
+      setCurrent(nextQuestion)
+    }
+  }
 
   return (
     <div className='App'>
