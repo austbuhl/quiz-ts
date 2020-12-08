@@ -40,10 +40,10 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
         ? 'linear-gradient(90deg, #ff5656, #c16868)'
         : 'linear-gradient(90deg, #56ccff, #6eafb4)'};
 
-    border: 3px solid white;
+    border: 3px solid #0085a3;
     box-shadow: 1px 2px 0px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    color: white;
+    color: black;
     text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.25);
   }
 `
