@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { fetchQuizQuestions } from './API'
 import QuestionCard from './components/QuestionCard'
-import { QuestionState, Difficulty } from './API'
+import { QuestionState } from './API'
 import { GlobalStyle, Wrapper } from './App.styles'
 
 export type AnswerObject = {
@@ -20,15 +20,13 @@ const App = () => {
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([])
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(true)
+  const [difficulty, setDifficulty] = useState('easy')
 
   const startQuiz = async () => {
     setLoading(true)
     setGameOver(false)
 
-    const newQuestions = await fetchQuizQuestions(
-      TOTAL_QUESTIONS,
-      Difficulty.EASY
-    )
+    const newQuestions = await fetchQuizQuestions(TOTAL_QUESTIONS, difficulty)
 
     setQuestions(newQuestions)
     setScore(0)
@@ -36,6 +34,8 @@ const App = () => {
     setCurrent(0)
     setLoading(false)
   }
+
+  console.log(questions)
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
@@ -63,11 +63,27 @@ const App = () => {
     }
   }
 
+  const adjustDifficulty = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDifficulty(e.target.value)
+  }
+
   return (
     <>
       <GlobalStyle />
       <Wrapper>
         <h1>Quiz APP</h1>
+        {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
+          <select
+            name='difficulty'
+            id='difficulty'
+            value={difficulty}
+            onChange={adjustDifficulty}
+          >
+            <option value='easy'>Easy</option>
+            <option value='medium'>Medium</option>
+            <option value='hard'>Hard</option>
+          </select>
+        )}
         {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
           <button className='start' onClick={startQuiz}>
             Start
