@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { fetchQuizQuestions } from './API'
 import QuestionCard from './components/QuestionCard'
 import { QuestionState } from './API'
@@ -35,7 +35,13 @@ const App = () => {
     setLoading(false)
   }
 
-  console.log(questions)
+  useEffect(() => {
+    if (current + 1 === TOTAL_QUESTIONS) {
+      setGameOver(true)
+    }
+  }, [current])
+
+  console.log(score)
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
@@ -72,6 +78,19 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <h1>Quiz APP</h1>
+        {!gameOver && <p className='score'>Score: {score}</p>}
+        {gameOver && (
+          <>
+            <ol>
+              <li>Austin - 5</li>
+              <li>Austin - 4</li>
+              <li>Austin - 3</li>
+            </ol>
+            <p className='score'>Final Score: {score}</p>
+            <input type='text' placeholder='Enter Name' />
+            <button>Submit Score</button>
+          </>
+        )}
         {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
           <select
             name='difficulty'
@@ -85,11 +104,12 @@ const App = () => {
           </select>
         )}
         {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
-          <button className='start' onClick={startQuiz}>
-            Start
-          </button>
+          <>
+            <button className='start' onClick={startQuiz}>
+              Start
+            </button>
+          </>
         )}
-        {!gameOver && <p className='score'>Score: {score}</p>}
         {loading && <p>Loading Questions...</p>}
 
         {!loading && !gameOver && (
