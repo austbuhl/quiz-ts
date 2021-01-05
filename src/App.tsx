@@ -36,12 +36,10 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (current + 1 === TOTAL_QUESTIONS) {
+    if (userAnswers.length === TOTAL_QUESTIONS) {
       setGameOver(true)
     }
-  }, [current])
-
-  console.log(score)
+  }, [userAnswers])
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
@@ -79,8 +77,9 @@ const App = () => {
       <Wrapper>
         <h1>Quiz APP</h1>
         {!gameOver && <p className='score'>Score: {score}</p>}
-        {gameOver && (
+        {gameOver && userAnswers.length > 0 && (
           <>
+            <h4>{`Leaderboard - ${difficulty.toUpperCase()}`}</h4>
             <ol>
               <li>Austin - 5</li>
               <li>Austin - 4</li>
@@ -89,9 +88,11 @@ const App = () => {
             <p className='score'>Final Score: {score}</p>
             <input type='text' placeholder='Enter Name' />
             <button>Submit Score</button>
+            <button onClick={() => setUserAnswers([])}>Restart?</button>
           </>
         )}
-        {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
+
+        {gameOver && userAnswers.length === 0 && (
           <select
             name='difficulty'
             id='difficulty'
@@ -103,7 +104,7 @@ const App = () => {
             <option value='hard'>Hard</option>
           </select>
         )}
-        {(gameOver || userAnswers.length === TOTAL_QUESTIONS) && (
+        {gameOver && userAnswers.length === 0 && (
           <>
             <button className='start' onClick={startQuiz}>
               Start
