@@ -13,6 +13,20 @@ export type AnswerObject = {
 
 const TOTAL_QUESTIONS = 10
 
+type ScoreObject = {
+  id: number
+  difficulty: string
+  score: number
+  createdAt: Date
+  updatedAt: Date
+  User: {
+    id: number
+    username: string
+    createdAt: Date
+    updatedAt: Date
+  }
+}
+
 const App = () => {
   const [loading, setLoading] = useState(false)
   const [questions, setQuestions] = useState<QuestionState[]>([])
@@ -21,6 +35,7 @@ const App = () => {
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(true)
   const [difficulty, setDifficulty] = useState('easy')
+  const [topScores, setTopScores] = useState<ScoreObject[]>([])
 
   const startQuiz = async () => {
     setLoading(true)
@@ -28,6 +43,7 @@ const App = () => {
 
     const newQuestions = await fetchQuizQuestions(TOTAL_QUESTIONS, difficulty)
 
+    fetchTopScores()
     setQuestions(newQuestions)
     setScore(0)
     setUserAnswers([])
@@ -40,6 +56,12 @@ const App = () => {
       setGameOver(true)
     }
   }, [userAnswers])
+
+  const fetchTopScores = () => {
+    fetch('http://localhost:5000/scores')
+      .then((res) => res.json())
+      .then((scores) => setTopScores(scores))
+  }
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
@@ -71,6 +93,13 @@ const App = () => {
     setDifficulty(e.target.value)
   }
 
+  const renderTopScores = () => {
+    return topScores
+      .sort((a, b) => b.score - a.score)
+      .filter((score) => score.difficulty.toLowerCase() === difficulty)
+      .map((score) => <li>{`${score.User.username} - ${score.score}`}</li>)
+  }
+
   return (
     <>
       <GlobalStyle />
@@ -80,11 +109,7 @@ const App = () => {
         {gameOver && userAnswers.length > 0 && (
           <>
             <h4>{`Leaderboard - ${difficulty.toUpperCase()}`}</h4>
-            <ol>
-              <li>Austin - 5</li>
-              <li>Austin - 4</li>
-              <li>Austin - 3</li>
-            </ol>
+            <ol>{renderTopScores()}</ol>
             <p className='score'>Final Score: {score}</p>
             <input type='text' placeholder='Enter Name' />
             <button>Submit Score</button>
