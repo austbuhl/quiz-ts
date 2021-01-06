@@ -53,7 +53,8 @@ export const Wrapper = styled.div`
   }
 
   .start,
-  .next {
+  .next,
+  .submit {
     cursor: pointer;
     background: linear-gradient(180deg, white, #ffcc91);
     border: 2px solid #d38558;
@@ -66,5 +67,18 @@ export const Wrapper = styled.div`
 
   .start {
     max-width: 200px;
+  }
+`
+export const Leaderboard = styled.div`
+  max-width: 1100px;
+  background: #ebfeff;
+  border-radius: 10px;
+  border: 2px solid #0085a3;
+  padding: 20px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+  text-align: center;
+
+  p {
+    font-size: 1rem;
   }
 `

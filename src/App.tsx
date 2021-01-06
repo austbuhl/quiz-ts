@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { fetchQuizQuestions } from './API'
 import QuestionCard from './components/QuestionCard'
 import { QuestionState } from './API'
-import { GlobalStyle, Wrapper } from './App.styles'
+import { GlobalStyle, Wrapper, Leaderboard } from './App.styles'
 
 export type AnswerObject = {
   question: string
@@ -36,6 +36,8 @@ const App = () => {
   const [gameOver, setGameOver] = useState(true)
   const [difficulty, setDifficulty] = useState('easy')
   const [topScores, setTopScores] = useState<ScoreObject[]>([])
+  const [username, setUsername] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
   const startQuiz = async () => {
     setLoading(true)
@@ -43,12 +45,13 @@ const App = () => {
 
     const newQuestions = await fetchQuizQuestions(TOTAL_QUESTIONS, difficulty)
 
-    fetchTopScores()
     setQuestions(newQuestions)
+    fetchTopScores()
     setScore(0)
     setUserAnswers([])
     setCurrent(0)
     setLoading(false)
+    setSubmitted(false)
   }
 
   useEffect(() => {
@@ -97,7 +100,32 @@ const App = () => {
     return topScores
       .sort((a, b) => b.score - a.score)
       .filter((score) => score.difficulty.toLowerCase() === difficulty)
-      .map((score) => <li>{`${score.User.username} - ${score.score}`}</li>)
+      .slice(0, 10)
+      .map((score) => (
+        <li key={score.id}>{`${score.User.username} - ${score.score}`}</li>
+      ))
+  }
+
+  const submitScore = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    fetch('http://localhost:5000/scores', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        accepts: 'application/json'
+      },
+      body: JSON.stringify({
+        username: username,
+        score: score,
+        difficulty: difficulty
+      })
+    })
+      .then((res) => res.json())
+      .then((score) => {
+        setTopScores([score, ...topScores])
+        setUsername('')
+        setSubmitted(true)
+      })
   }
 
   return (
@@ -107,14 +135,25 @@ const App = () => {
         <h1>Quiz APP</h1>
         {!gameOver && <p className='score'>Score: {score}</p>}
         {gameOver && userAnswers.length > 0 && (
-          <>
-            <h4>{`Leaderboard - ${difficulty.toUpperCase()}`}</h4>
+          <Leaderboard>
+            <h3>{`Leaderboard - ${difficulty.toUpperCase()}`}</h3>
             <ol>{renderTopScores()}</ol>
             <p className='score'>Final Score: {score}</p>
-            <input type='text' placeholder='Enter Name' />
-            <button>Submit Score</button>
-            <button onClick={() => setUserAnswers([])}>Restart?</button>
-          </>
+            {!submitted && (
+              <form onSubmit={submitScore}>
+                <input
+                  type='text'
+                  placeholder='Enter Name'
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <button className='submit'>Submit Score</button>
+              </form>
+            )}
+            <button className='start' onClick={() => setUserAnswers([])}>
+              Restart?
+            </button>
+          </Leaderboard>
         )}
 
         {gameOver && userAnswers.length === 0 && (
