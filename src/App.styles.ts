@@ -68,6 +68,11 @@ export const Wrapper = styled.div`
   .start {
     max-width: 200px;
   }
+
+  select {
+    border-radius: 10px;
+    outline-width: 0;
+  }
 `
 export const Leaderboard = styled.div`
   max-width: 1100px;
@@ -80,5 +85,12 @@ export const Leaderboard = styled.div`
 
   p {
     font-size: 1rem;
+  }
+
+  input {
+    border-radius: 10px;
+    outline-width: 0;
+    padding: 0.5em;
+    width: 100%;
   }
 `

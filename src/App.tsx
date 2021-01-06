@@ -61,7 +61,7 @@ const App = () => {
   }, [userAnswers])
 
   const fetchTopScores = () => {
-    fetch('http://localhost:5000/scores')
+    fetch('https://trivial-backend.herokuapp.com/scores')
       .then((res) => res.json())
       .then((scores) => setTopScores(scores))
   }
@@ -108,7 +108,7 @@ const App = () => {
 
   const submitScore = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    fetch('http://localhost:5000/scores', {
+    fetch('https://trivial-backend.herokuapp.com/scores', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -132,7 +132,7 @@ const App = () => {
     <>
       <GlobalStyle />
       <Wrapper>
-        <h1>Quiz APP</h1>
+        <h1>TRIVIAL</h1>
         {!gameOver && <p className='score'>Score: {score}</p>}
         {gameOver && userAnswers.length > 0 && (
           <Leaderboard>
